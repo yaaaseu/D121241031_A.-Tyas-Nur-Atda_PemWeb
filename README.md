@@ -1,3 +1,3 @@
 Nama : A. Tyas Nur Atda
 NIM : D121241031
-Kelas : Teknik Informatika A
+Kelas : Teknik Informatika B
