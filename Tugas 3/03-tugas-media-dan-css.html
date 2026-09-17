@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemutar Media Kuliah Responsif</title>
+    <link rel="stylesheet" href="">
+    </head>
+    <body>
+
+    <main class="page">
+        <h1 class="page__title">Pemutar Media Kuliah — E-Learning Kampus</h1>
+        <p class="page__subtitle">Contoh komponen kartu multimedia: video, audio, dan ilustrasi sampul responsif.</p>
+
+        <div class="card-grid">
+
+        <!-- KARTU 1 — Status normal (belum ditonton)                -->
+        <article class="media-card">
+            <div class="media-card__cover">
+            <picture class="media-card__picture">
+                <source
+                srcset="https://picsum.photos/id/1069/1200/675.webp"
+                media="(min-width: 900px)"
+                type="image/webp">
+                <source
+                srcset="https://picsum.photos/id/1069/600/338.webp"
+                media="(min-width: 480px)"
+                type="image/webp">
+                <img
+                src="https://picsum.photos/id/1069/480/270.jpg"
+                alt="Ilustrasi sampul materi Struktur Data — Pohon Biner"
+                class="media-card__img"
+                loading="lazy">
+            </picture>
+            <span class="media-card__badge">Video Kuliah</span>
+            </div>
+
+            <div class="media-card__body">
+            <h2 class="media-card__title">Struktur Data: Pohon Biner</h2>
+
+            <video
+                class="media-card__video"
+                controls
+                preload="metadata"
+                poster="https://picsum.photos/id/1069/800/450.jpg">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                Peramban Anda tidak mendukung elemen video.
+            </video>
+
+            <p class="media-card__desc">
+                Membahas konsep dasar pohon biner, operasi insert, delete, serta traversal
+                (in-order, pre-order, post-order) beserta studi kasus implementasinya.
+            </p>
+
+            <div class="media-card__audio-wrap">
+                <p class="media-card__audio-label">🎧 Ringkasan audio (podcast materi):</p>
+                <audio class="media-card__audio" controls preload="none">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" type="audio/mpeg">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.ogg" type="audio/ogg">
+                Peramban Anda tidak mendukung elemen audio.
+                </audio>
+            </div>
+
+            <div class="media-card__meta">
+                <span class="media-card__duration">⏱ 24 menit</span>
+                <span class="media-card__status media-card__status--pending">Belum ditonton</span>
+            </div>
+            </div>
+        </article>
+
+        <!-- KARTU 2 — Status tambahan "media-card--completed"       -->
+        <article class="media-card media-card--completed">
+            <div class="media-card__cover">
+            <picture class="media-card__picture">
+                <source
+                srcset="https://picsum.photos/id/180/1200/675.webp"
+                media="(min-width: 900px)"
+                type="image/webp">
+                <source
+                srcset="https://picsum.photos/id/180/600/338.webp"
+                media="(min-width: 480px)"
+                type="image/webp">
+                <img
+                src="https://picsum.photos/id/180/480/270.jpg"
+                alt="Ilustrasi sampul materi Basis Data Relasional"
+                class="media-card__img"
+                loading="lazy">
+            </picture>
+            <span class="media-card__badge">Video Kuliah</span>
+            </div>
+
+            <div class="media-card__body">
+            <h2 class="media-card__title">Basis Data Relasional: Normalisasi</h2>
+
+            <video
+                class="media-card__video"
+                controls
+                preload="metadata"
+                poster="https://picsum.photos/id/180/800/450.jpg">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                Peramban Anda tidak mendukung elemen video.
+            </video>
+
+            <p class="media-card__desc">
+                Menjelaskan bentuk normal 1NF, 2NF, dan 3NF pada perancangan skema basis data
+                untuk menghindari redundansi dan anomali data.
+            </p>
+
+            <div class="media-card__audio-wrap">
+                <p class="media-card__audio-label">🎧 Ringkasan audio (podcast materi):</p>
+                <audio class="media-card__audio" controls preload="none">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" type="audio/mpeg">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.ogg" type="audio/ogg">
+                Peramban Anda tidak mendukung elemen audio.
+                </audio>
+            </div>
+
+            <div class="media-card__meta">
+                <span class="media-card__duration">⏱ 31 menit</span>
+                <span class="media-card__status media-card__status--done">Sudah selesai ✔</span>
+            </div>
+            </div>
+        </article>
+
+        </div>
+    </main>
+
+    </body>
+</html>
