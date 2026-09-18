@@ -159,3 +159,24 @@ picture {
   background-color: #d1fae5;
   color: #065f46;
 }
+media-card--completed .media-card__desc {
+  color: #166534;         
+  font-style: italic;     
+  font-weight: 500;
+  border-left: 3px solid #22c55e;
+  padding-left: 0.6rem;
+}
+
+.media-card--completed {
+  border: 1px solid #bbf7d0;
+}
+
+@media (max-width: 400px) {
+  .page__title {
+    font-size: 1.4rem;
+  }
+
+  .media-card__body {
+    padding: 1rem;
+  }
+}
