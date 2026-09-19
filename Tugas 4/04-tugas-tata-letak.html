@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Jurnal Ilmiah Kedokteran Gigi</title>
+  <title>Portal Jurnal Ilmiah Fakultas Teknik</title>
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   
@@ -23,15 +23,31 @@
 
   <main class="grid-layout">
     <aside class="grid-layout__sidebar">
-      <p>Sidebar Navigasi Jurnal</p>
+      <h5 class="mb-3 border-bottom pb-2">Kategori</h5>
+      <ul class="list-unstyled">
+        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary">Kecerdasan Buatan</a></li>
+        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary">Internet of Things</a></li>
+        <li class="mb-2"><a href="#" class="text-decoration-none text-secondary">Cloud Computing</a></li>
+      </ul>
     </aside>
     
     <section class="grid-layout__center">
-      <p>Area Kartu Artikel</p>
+      <h4 class="mb-3">Publikasi Terbaru</h4>
+      <div id="tempat-kartu-artikel" class="p-4 border border-dashed rounded text-center text-muted">
+
+      </div>
     </section>
     
     <aside class="grid-layout__right">
-      <p>Info Metrik & Indexing</p>
+      <h5 class="mb-3 border-bottom pb-2">Informasi Jurnal</h5>
+      <div class="p-3 bg-light rounded border mb-3">
+        <strong class="d-block mb-1">e-ISSN:</strong>
+        <span class="text-muted">2715-XXXX</span>
+      </div>
+      <div class="p-3 bg-light rounded border">
+        <strong class="d-block mb-1">Terindeks oleh:</strong>
+        <span class="text-muted">SINTA 2, DOAJ, Garuda</span>
+      </div>
     </aside>
   </main>
 
