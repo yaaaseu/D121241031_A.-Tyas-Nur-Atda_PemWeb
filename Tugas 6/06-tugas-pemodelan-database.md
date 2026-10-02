@@ -114,3 +114,28 @@ berarti buku belum dikembalikan.*
    difilter per kolom, misalnya "cari semua peminjam buku B001".
 3. Identitas mahasiswa dan data buku ditulis ulang di banyak tempat (Rian muncul di
    PJ001 dan PJ003, buku B001 muncul di PJ001 dan PJ002).
+
+### 4.2 Konversi ke Bentuk Normal Pertama (1NF)
+
+**Tabel hasil 1NF** (PK komposit: `peminjaman_id` + `buku_id`):
+
+| peminjaman_id (PK-1) | buku_id (PK-2) | nim | nama_mhs | prodi | angkatan | no_hp | tgl_pinjam | tgl_jatuh_tempo | isbn | judul | pengarang | tahun_terbit | stok | penerbit_id | nama_penerbit | alamat_penerbit | tgl_kembali | denda |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| PJ001 | B001 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-01 | 2025-10-08 | 978-602-11-0001-1 | Pemrograman Web dengan PHP | Andi Wijaya | 2021 | 5 | P01 | Nusantara Press | Makassar | 2025-10-07 | 0 |
+| PJ001 | B002 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-01 | 2025-10-08 | 978-602-11-0002-8 | Basis Data Relasional | Sari Dewi | 2020 | 3 | P02 | Cahaya Ilmu | Jakarta | 2025-10-10 | 2000 |
+| PJ002 | B001 | D121241002 | Akbar | Teknik Elektro | 2023 | 085298765432 | 2025-10-02 | 2025-10-09 | 978-602-11-0001-1 | Pemrograman Web dengan PHP | Andi Wijaya | 2021 | 5 | P01 | Nusantara Press | Makassar | 2025-10-09 | 0 |
+| PJ002 | B003 | D121241002 | Akbar | Teknik Elektro | 2023 | 085298765432 | 2025-10-02 | 2025-10-09 | 978-602-11-0003-5 | Algoritma dan Struktur Data | Budi Santoso | 2019 | 4 | P01 | Nusantara Press | Makassar | NULL | 0 |
+| PJ003 | B003 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-15 | 2025-10-22 | 978-602-11-0003-5 | Algoritma dan Struktur Data | Budi Santoso | 2019 | 4 | P01 | Nusantara Press | Makassar | NULL | 0 |
+
+**Hasil pemeriksaan:**
+
+- Tidak ada lagi sel yang memuat lebih dari satu nilai, sehingga tabel memenuhi 1NF.
+- Jumlah baris bertambah dari 3 menjadi 5, satu baris untuk setiap pasangan transaksi-buku.
+
+**Masalah yang masih tersisa (redundansi):**
+
+1. Data mahasiswa Rian (`nama_mhs`, `prodi`, `angkatan`, `no_hp`) ditulis berulang pada
+   3 baris, yaitu PJ001 dua kali dan PJ003.
+2. Data transaksi (`nim`, `tgl_pinjam`, `tgl_jatuh_tempo`) ditulis ulang pada setiap
+   buku dalam transaksi yang sama.
+3. Data buku B001 dan B003 beserta penerbitnya ditulis ulang setiap kali buku itu dipinjam.
