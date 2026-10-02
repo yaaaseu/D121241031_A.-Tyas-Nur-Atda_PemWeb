@@ -341,3 +341,107 @@ buku tidak dapat tercatat dua kali dalam transaksi yang sama.
   bagian tak terpisahkan dari satu transaksi.
 - **SET NULL** tidak dipakai karena seluruh Foreign Key bersifat wajib (NOT NULL);
   setiap buku harus memiliki penerbit dan setiap transaksi harus memiliki peminjam.
+
+  ## 6. Visualisasi Relasi Kunci
+
+### 6.1 Diagram ERD (Mermaid)
+
+```mermaid
+erDiagram
+    penerbit ||--o{ buku : "menerbitkan"
+    mahasiswa ||--o{ peminjaman : "melakukan"
+    peminjaman ||--|{ detail_peminjaman : "memuat"
+    buku ||--o{ detail_peminjaman : "dipinjam dalam"
+
+    mahasiswa {
+        VARCHAR(12) nim PK
+        VARCHAR(100) nama_mhs
+        VARCHAR(50) prodi
+        SMALLINT angkatan
+        VARCHAR(15) no_hp
+    }
+
+    penerbit {
+        VARCHAR(10) penerbit_id PK
+        VARCHAR(100) nama_penerbit
+        VARCHAR(255) alamat_penerbit
+    }
+
+    buku {
+        VARCHAR(10) buku_id PK
+        VARCHAR(17) isbn UK
+        VARCHAR(200) judul
+        VARCHAR(100) pengarang
+        SMALLINT tahun_terbit
+        SMALLINT stok
+        VARCHAR(10) penerbit_id FK
+    }
+
+    peminjaman {
+        VARCHAR(10) peminjaman_id PK
+        VARCHAR(12) nim FK
+        DATE tgl_pinjam
+        DATE tgl_jatuh_tempo
+    }
+
+    detail_peminjaman {
+        VARCHAR(10) peminjaman_id PK, FK
+        VARCHAR(10) buku_id PK, FK
+        DATE tgl_kembali
+        INT denda
+    }
+```
+
+**Cara membaca kardinalitas:**
+
+| Relasi | Notasi | Arti |
+|---|---|---|
+| penerbit - buku | `\|\|--o{` | Satu penerbit menerbitkan nol atau banyak buku; satu buku tepat satu penerbit |
+| mahasiswa - peminjaman | `\|\|--o{` | Satu mahasiswa melakukan nol atau banyak transaksi; satu transaksi tepat satu mahasiswa |
+| peminjaman - detail_peminjaman | `\|\|--\|{` | Satu transaksi memuat satu atau banyak buku; satu detail tepat satu transaksi |
+| buku - detail_peminjaman | `\|\|--o{` | Satu buku dapat muncul nol atau banyak kali di detail peminjaman |
+
+Tabel `detail_peminjaman` adalah tabel penghubung relasi many-to-many antara
+`peminjaman` dan `buku`.
+
+### 6.2 Diagram Alur Teks
+
+```text
+penerbit
+  penerbit_id (PK) ......... nama_penerbit, alamat_penerbit
+        |
+        | 1 : N
+        v
+buku
+  buku_id (PK) ............. isbn, judul, pengarang, tahun_terbit, stok
+  penerbit_id (FK) -------- penerbit.penerbit_id
+        |
+        | 1 : N
+        v
+detail_peminjaman
+  peminjaman_id (PK, FK) -- peminjaman.peminjaman_id
+  buku_id (PK, FK) -------- buku.buku_id
+  tgl_kembali, denda
+        ^
+        | N : 1
+        |
+peminjaman
+  peminjaman_id (PK) ....... tgl_pinjam, tgl_jatuh_tempo
+  nim (FK) ---------------- mahasiswa.nim
+        ^
+        | N : 1
+        |
+mahasiswa
+  nim (PK) ................. nama_mhs, prodi, angkatan, no_hp
+```
+
+### 6.3 Penjelasan Diagram
+
+1. Tabel `penerbit` dan `mahasiswa` adalah **tabel induk murni** karena tidak memiliki
+   Foreign Key.
+2. Tabel `detail_peminjaman` memiliki **Primary Key komposit** yang sekaligus dua
+   Foreign Key, sehingga satu buku tidak dapat dicatat dua kali dalam satu transaksi.
+3. Perubahan alamat penerbit atau data mahasiswa kini cukup dilakukan pada **satu baris**
+   di tabel induknya.
+4. Setiap Foreign Key wajib merujuk nilai yang benar-benar ada di tabel induk, dijaga
+   oleh aturan integritas referensial pada bagian 5.6.
