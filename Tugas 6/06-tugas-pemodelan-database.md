@@ -266,3 +266,78 @@ Berdasarkan analisis ketergantungan pada 1NF, ketergantungan parsial dipisahkan 
 | buku | buku_id → isbn, judul, pengarang, tahun_terbit, stok, penerbit_id | Tidak |
 | peminjaman | peminjaman_id → nim, tgl_pinjam, tgl_jatuh_tempo | Tidak |
 | detail_peminjaman | (peminjaman_id, buku_id) → tgl_kembali, denda | Tidak |
+
+## 5. Rancangan Tabel Akhir
+
+Tipe data mengacu pada MySQL. Seluruh tabel memenuhi 3NF dan mengikuti konvensi
+penamaan modul (huruf kecil, snake_case, nama tabel tunggal, nama FK sama dengan PK rujukan).
+
+### 5.1 Tabel `mahasiswa`
+
+| Kolom | Tipe Data | Kunci | Constraint | Keterangan |
+|---|---|---|---|---|
+| nim | VARCHAR(12) | PK | NOT NULL | Nomor induk mahasiswa |
+| nama_mhs | VARCHAR(100) | | NOT NULL | Nama lengkap |
+| prodi | VARCHAR(50) | | NOT NULL | Program studi |
+| angkatan | SMALLINT | | NOT NULL | Tahun masuk, contoh 2024 |
+| no_hp | VARCHAR(15) | | NULL | Disimpan sebagai teks agar angka 0 di depan tidak hilang |
+
+### 5.2 Tabel `penerbit`
+
+| Kolom | Tipe Data | Kunci | Constraint | Keterangan |
+|---|---|---|---|---|
+| penerbit_id | VARCHAR(10) | PK | NOT NULL | Contoh P01 |
+| nama_penerbit | VARCHAR(100) | | NOT NULL | Nama penerbit |
+| alamat_penerbit | VARCHAR(255) | | NULL | Alamat atau kota penerbit |
+
+### 5.3 Tabel `buku`
+
+| Kolom | Tipe Data | Kunci | Constraint | Keterangan |
+|---|---|---|---|---|
+| buku_id | VARCHAR(10) | PK | NOT NULL | Contoh B001 |
+| isbn | VARCHAR(17) | | NOT NULL, UNIQUE | Format 978-602-11-0001-1 (17 karakter termasuk tanda hubung) |
+| judul | VARCHAR(200) | | NOT NULL | Judul buku |
+| pengarang | VARCHAR(100) | | NOT NULL | Pengarang utama |
+| tahun_terbit | SMALLINT | | NOT NULL | Tahun terbit |
+| stok | SMALLINT UNSIGNED | | NOT NULL, DEFAULT 0 | Jumlah eksemplar tersedia, tidak boleh negatif |
+| penerbit_id | VARCHAR(10) | FK | NOT NULL | Merujuk `penerbit.penerbit_id` |
+
+### 5.4 Tabel `peminjaman`
+
+| Kolom | Tipe Data | Kunci | Constraint | Keterangan |
+|---|---|---|---|---|
+| peminjaman_id | VARCHAR(10) | PK | NOT NULL | Contoh PJ001 |
+| nim | VARCHAR(12) | FK | NOT NULL | Merujuk `mahasiswa.nim` |
+| tgl_pinjam | DATE | | NOT NULL | Tanggal transaksi |
+| tgl_jatuh_tempo | DATE | | NOT NULL, CHECK (tgl_jatuh_tempo >= tgl_pinjam) | Batas pengembalian |
+
+### 5.5 Tabel `detail_peminjaman`
+
+| Kolom | Tipe Data | Kunci | Constraint | Keterangan |
+|---|---|---|---|---|
+| peminjaman_id | VARCHAR(10) | PK, FK | NOT NULL | Merujuk `peminjaman.peminjaman_id` |
+| buku_id | VARCHAR(10) | PK, FK | NOT NULL | Merujuk `buku.buku_id` |
+| tgl_kembali | DATE | | NULL | NULL berarti buku belum dikembalikan |
+| denda | INT UNSIGNED | | NOT NULL, DEFAULT 0 | Denda dalam rupiah, disimpan sebagai catatan historis |
+
+Primary Key tabel ini bersifat komposit (`peminjaman_id`, `buku_id`), sehingga satu
+buku tidak dapat tercatat dua kali dalam transaksi yang sama.
+
+### 5.6 Aturan Integritas Referensial
+
+| Foreign Key | Tabel Induk | ON DELETE | ON UPDATE | Alasan |
+|---|---|---|---|---|
+| buku.penerbit_id | penerbit | RESTRICT | CASCADE | Penerbit tidak boleh dihapus selama masih memiliki buku |
+| peminjaman.nim | mahasiswa | RESTRICT | CASCADE | Riwayat peminjaman adalah data historis yang wajib dipertahankan |
+| detail_peminjaman.peminjaman_id | peminjaman | CASCADE | CASCADE | Detail tidak bermakna tanpa transaksi induknya |
+| detail_peminjaman.buku_id | buku | RESTRICT | CASCADE | Buku yang pernah dipinjam tidak boleh hilang dari riwayat |
+
+**Penjelasan pemilihan aturan:**
+
+- **RESTRICT** dipakai pada `nim` dan `buku_id` karena riwayat peminjaman harus tetap utuh.
+  Jika CASCADE dipakai di sini, menghapus satu mahasiswa akan menghapus seluruh riwayat
+  peminjamannya secara berantai dan tidak dapat dipulihkan.
+- **CASCADE** hanya dipakai pada `detail_peminjaman.peminjaman_id`, karena detail adalah
+  bagian tak terpisahkan dari satu transaksi.
+- **SET NULL** tidak dipakai karena seluruh Foreign Key bersifat wajib (NOT NULL);
+  setiap buku harus memiliki penerbit dan setiap transaksi harus memiliki peminjam.
