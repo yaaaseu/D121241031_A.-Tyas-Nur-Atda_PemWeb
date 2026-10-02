@@ -139,3 +139,58 @@ berarti buku belum dikembalikan.*
 2. Data transaksi (`nim`, `tgl_pinjam`, `tgl_jatuh_tempo`) ditulis ulang pada setiap
    buku dalam transaksi yang sama.
 3. Data buku B001 dan B003 beserta penerbitnya ditulis ulang setiap kali buku itu dipinjam.
+
+### 4.3 Konversi ke Bentuk Normal Kedua (2NF)
+
+**Langkah konversi:**
+
+Berdasarkan analisis ketergantungan pada 1NF, ketergantungan parsial dipisahkan menjadi tiga tabel:
+
+1. Atribut yang hanya bergantung pada `peminjaman_id` dipindahkan ke tabel `peminjaman`.
+2. Atribut yang hanya bergantung pada `buku_id` dipindahkan ke tabel `buku`.
+3. Atribut yang bergantung pada kombinasi `peminjaman_id` dan `buku_id` tetap berada di
+   tabel `detail_peminjaman`.
+
+**Tabel `peminjaman`** (PK: `peminjaman_id`)
+
+| peminjaman_id (PK) | nim | nama_mhs | prodi | angkatan | no_hp | tgl_pinjam | tgl_jatuh_tempo |
+|---|---|---|---|---|---|---|---|
+| PJ001 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-01 | 2025-10-08 |
+| PJ002 | D121241002 | Akbar | Teknik Elektro | 2023 | 085298765432 | 2025-10-02 | 2025-10-09 |
+| PJ003 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-15 | 2025-10-22 |
+
+**Tabel `buku`** (PK: `buku_id`)
+
+| buku_id (PK) | isbn | judul | pengarang | tahun_terbit | stok | penerbit_id | nama_penerbit | alamat_penerbit |
+|---|---|---|---|---|---|---|---|---|
+| B001 | 978-602-11-0001-1 | Pemrograman Web dengan PHP | Andi Wijaya | 2021 | 5 | P01 | Nusantara Press | Makassar |
+| B002 | 978-602-11-0002-8 | Basis Data Relasional | Sari Dewi | 2020 | 3 | P02 | Cahaya Ilmu | Jakarta |
+| B003 | 978-602-11-0003-5 | Algoritma dan Struktur Data | Budi Santoso | 2019 | 4 | P01 | Nusantara Press | Makassar |
+
+**Tabel `detail_peminjaman`** (PK komposit: `peminjaman_id` + `buku_id`)
+
+| peminjaman_id (PK-1) | buku_id (PK-2) | tgl_kembali | denda |
+|---|---|---|---|
+| PJ001 | B001 | 2025-10-07 | 0 |
+| PJ001 | B002 | 2025-10-10 | 2000 |
+| PJ002 | B001 | 2025-10-09 | 0 |
+| PJ002 | B003 | NULL | 0 |
+| PJ003 | B003 | NULL | 0 |
+
+**Hasil pemeriksaan:**
+
+- Pada `peminjaman` dan `buku`, kunci utamanya tunggal, sehingga ketergantungan parsial
+  tidak mungkin terjadi.
+- Pada `detail_peminjaman`, `tgl_kembali` dan `denda` hanya dapat ditentukan oleh
+  pasangan transaksi dan buku, jadi bergantung penuh pada kunci komposit.
+- Data buku B001 dan B003 kini tercatat satu kali, tidak lagi diulang setiap dipinjam.
+- Tabel memenuhi 2NF.
+
+**Masalah yang masih tersisa (ketergantungan transitif):**
+
+1. Pada `peminjaman`, kolom `nama_mhs`, `prodi`, `angkatan`, dan `no_hp` bergantung pada
+   `nim`, padahal `nim` bukan kunci utama (`peminjaman_id → nim → nama_mhs`).
+   Akibatnya data Rian masih tertulis dua kali (PJ001 dan PJ003).
+2. Pada `buku`, kolom `nama_penerbit` dan `alamat_penerbit` bergantung pada `penerbit_id`,
+   padahal `penerbit_id` bukan kunci utama (`buku_id → penerbit_id → nama_penerbit`).
+   Akibatnya data Nusantara Press masih tertulis dua kali (B001 dan B003).
