@@ -194,3 +194,74 @@ Berdasarkan analisis ketergantungan pada 1NF, ketergantungan parsial dipisahkan 
 2. Pada `buku`, kolom `nama_penerbit` dan `alamat_penerbit` bergantung pada `penerbit_id`,
    padahal `penerbit_id` bukan kunci utama (`buku_id → penerbit_id → nama_penerbit`).
    Akibatnya data Nusantara Press masih tertulis dua kali (B001 dan B003).
+
+   ### 4.4 Konversi ke Bentuk Normal Ketiga (3NF)
+
+**Langkah konversi:**
+
+1. Ketergantungan transitif `peminjaman_id → nim → nama_mhs, prodi, angkatan, no_hp`
+   dihilangkan dengan memindahkan atribut mahasiswa ke tabel `mahasiswa`.
+   Kolom `nim` tetap di `peminjaman` sebagai Foreign Key.
+2. Ketergantungan transitif `buku_id → penerbit_id → nama_penerbit, alamat_penerbit`
+   dihilangkan dengan memindahkan atribut penerbit ke tabel `penerbit`.
+   Kolom `penerbit_id` tetap di `buku` sebagai Foreign Key.
+3. Tabel `detail_peminjaman` tidak berubah karena sudah memenuhi 3NF.
+
+**Tabel `mahasiswa`** (PK: `nim`)
+
+| nim (PK) | nama_mhs | prodi | angkatan | no_hp |
+|---|---|---|---|---|
+| D121241001 | Rian | Informatika | 2024 | 081234567890 |
+| D121241002 | Akbar | Teknik Elektro | 2023 | 085298765432 |
+
+**Tabel `penerbit`** (PK: `penerbit_id`)
+
+| penerbit_id (PK) | nama_penerbit | alamat_penerbit |
+|---|---|---|
+| P01 | Nusantara Press | Makassar |
+| P02 | Cahaya Ilmu | Jakarta |
+
+**Tabel `buku`** (PK: `buku_id`, FK: `penerbit_id`)
+
+| buku_id (PK) | isbn | judul | pengarang | tahun_terbit | stok | penerbit_id (FK) |
+|---|---|---|---|---|---|---|
+| B001 | 978-602-11-0001-1 | Pemrograman Web dengan PHP | Andi Wijaya | 2021 | 5 | P01 |
+| B002 | 978-602-11-0002-8 | Basis Data Relasional | Sari Dewi | 2020 | 3 | P02 |
+| B003 | 978-602-11-0003-5 | Algoritma dan Struktur Data | Budi Santoso | 2019 | 4 | P01 |
+
+**Tabel `peminjaman`** (PK: `peminjaman_id`, FK: `nim`)
+
+| peminjaman_id (PK) | nim (FK) | tgl_pinjam | tgl_jatuh_tempo |
+|---|---|---|---|
+| PJ001 | D121241001 | 2025-10-01 | 2025-10-08 |
+| PJ002 | D121241002 | 2025-10-02 | 2025-10-09 |
+| PJ003 | D121241001 | 2025-10-15 | 2025-10-22 |
+
+**Tabel `detail_peminjaman`** (PK komposit: `peminjaman_id` + `buku_id`, FK: keduanya)
+
+| peminjaman_id (PK, FK) | buku_id (PK, FK) | tgl_kembali | denda |
+|---|---|---|---|
+| PJ001 | B001 | 2025-10-07 | 0 |
+| PJ001 | B002 | 2025-10-10 | 2000 |
+| PJ002 | B001 | 2025-10-09 | 0 |
+| PJ002 | B003 | NULL | 0 |
+| PJ003 | B003 | NULL | 0 |
+
+**Ringkasan tabel hasil 3NF:**
+
+| Tabel | Kunci Utama | Kunci Tamu | Kolom Data |
+|---|---|---|---|
+| mahasiswa | nim | — | nama_mhs, prodi, angkatan, no_hp |
+| penerbit | penerbit_id | — | nama_penerbit, alamat_penerbit |
+| buku | buku_id | penerbit_id | isbn, judul, pengarang, tahun_terbit, stok |
+| peminjaman | peminjaman_id | nim | tgl_pinjam, tgl_jatuh_tempo |
+| detail_peminjaman | peminjaman_id + buku_id | peminjaman_id, buku_id | tgl_kembali, denda |
+
+**Pemeriksaan 3NF:**
+
+| Tabel | Ketergantungan fungsional | Transitif? |
+|---|---|---|
+| mahasiswa | nim → nama_mhs, prodi, angkatan, no_hp | Tidak |
+| penerbit | penerbit_id → nama_penerbit, alamat_penerbit | Tidak |
+| buku | buku_id → isbn, judul, pengarang, tahun_terbit, stok, penerbit_id | Tidak |
+| peminjaman | peminjaman_id → nim, tgl_pinjam, tgl_jatuh_tempo |
