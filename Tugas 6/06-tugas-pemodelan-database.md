@@ -79,3 +79,38 @@ Entitas ini diwujudkan dalam dua tabel: header transaksi dan detail buku yang di
 | peminjaman - detail_peminjaman | 1 : N | Satu transaksi memuat banyak buku |
 | buku - detail_peminjaman | 1 : N | Satu buku dapat dipinjam berkali-kali |
 | peminjaman - buku | M : N | Diwujudkan lewat tabel detail_peminjaman |
+
+## 4. Simulasi Normalisasi
+
+### 4.1 Bentuk Tidak Normal (UNF)
+
+Data awal dicatat petugas perpustakaan dalam satu tabel besar. Setiap baris mewakili satu
+transaksi, dan seluruh buku yang dipinjam pada transaksi ditulis dalam satu sel
+sebagai kelompok berulang.
+
+**Struktur kolom UNF:**
+
+`peminjaman_id`, `nim`, `nama_mhs`, `prodi`, `angkatan`, `no_hp`, `tgl_pinjam`,
+`tgl_jatuh_tempo`, dan kelompok berulang **Buku Dipinjam**
+{`buku_id`, `isbn`, `judul`, `pengarang`, `tahun_terbit`, `stok`, `penerbit_id`,
+`nama_penerbit`, `alamat_penerbit`, `tgl_kembali`, `denda`}
+
+**Contoh data:**
+
+| peminjaman_id | nim | nama_mhs | prodi | angkatan | no_hp | tgl_pinjam | tgl_jatuh_tempo | Buku Dipinjam |
+|---|---|---|---|---|---|---|---|---|
+| PJ001 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-01 | 2025-10-08 | {B001, 978-602-11-0001-1, Pemrograman Web dengan PHP, Andi Wijaya, 2021, 5, P01, Nusantara Press, Makassar, 2025-10-07, 0}<br>{B002, 978-602-11-0002-8, Basis Data Relasional, Sari Dewi, 2020, 3, P02, Cahaya Ilmu, Jakarta, 2025-10-10, 2000} |
+| PJ002 | D121241002 | Akbar | Teknik Elektro | 2023 | 085298765432 | 2025-10-02 | 2025-10-09 | {B001, 978-602-11-0001-1, Pemrograman Web dengan PHP, Andi Wijaya, 2021, 5, P01, Nusantara Press, Makassar, 2025-10-09, 0}<br>{B003, 978-602-11-0003-5, Algoritma dan Struktur Data, Budi Santoso, 2019, 4, P01, Nusantara Press, Makassar, NULL, 0} |
+| PJ003 | D121241001 | Rian | Informatika | 2024 | 081234567890 | 2025-10-15 | 2025-10-22 | {B003, 978-602-11-0003-5, Algoritma dan Struktur Data, Budi Santoso, 2019, 4, P01, Nusantara Press, Makassar, NULL, 0} |
+
+*Keterangan: denda dihitung Rp1.000 per hari keterlambatan. `tgl_kembali` bernilai NULL
+berarti buku belum dikembalikan.*
+
+**Masalah pada bentuk UNF:**
+
+1. Kolom **Buku Dipinjam** memuat lebih dari satu nilai dalam satu sel (PJ001 dan PJ002
+   masing-masing berisi dua buku), sehingga belum memenuhi syarat 1NF.
+2. Satu sel menggabungkan 11 atribut sekaligus, sehingga data tidak dapat dicari atau
+   difilter per kolom, misalnya "cari semua peminjam buku B001".
+3. Identitas mahasiswa dan data buku ditulis ulang di banyak tempat (Rian muncul di
+   PJ001 dan PJ003, buku B001 muncul di PJ001 dan PJ002).
