@@ -264,4 +264,5 @@ Berdasarkan analisis ketergantungan pada 1NF, ketergantungan parsial dipisahkan 
 | mahasiswa | nim → nama_mhs, prodi, angkatan, no_hp | Tidak |
 | penerbit | penerbit_id → nama_penerbit, alamat_penerbit | Tidak |
 | buku | buku_id → isbn, judul, pengarang, tahun_terbit, stok, penerbit_id | Tidak |
-| peminjaman | peminjaman_id → nim, tgl_pinjam, tgl_jatuh_tempo |
+| peminjaman | peminjaman_id → nim, tgl_pinjam, tgl_jatuh_tempo | Tidak |
+| detail_peminjaman | (peminjaman_id, buku_id) → tgl_kembali, denda | Tidak |
