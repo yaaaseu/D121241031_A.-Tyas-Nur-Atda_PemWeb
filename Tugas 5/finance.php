@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once 'Transaction.php'; 
+session_start();
 
 if (!isset($_SESSION['balance'])) {
     $_SESSION['balance'] = 0.0;
