@@ -4,7 +4,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/src/GuestBook.php';
 
-// Cookie sesi tidak dapat dibaca JavaScript dan tidak dikirim dari situs lain
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
@@ -13,24 +12,20 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// Header keamanan dasar
 header('X-Content-Type-Options: nosniff');
 header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
 
-/** Sanitasi keluaran: mengubah karakter khusus HTML menjadi teks biasa. */
 function e(string $teks): string
 {
     return htmlspecialchars($teks, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/** Mengambil isian POST sebagai string. Nilai non-string (misal nama[]) dianggap kosong. */
 function ambilInput(string $kunci): string
 {
     $nilai = $_POST[$kunci] ?? '';
     return is_string($nilai) ? trim($nilai) : '';
 }
 
-// Token CSRF dibuat sekali per sesi
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -42,7 +37,6 @@ $input     = ['nama' => '', 'email' => '', 'pesan' => ''];
 $galat     = [];
 $galatUmum = '';
 
-// Pesan sukses dari pengalihan sebelumnya, ditampilkan sekali saja
 $sukses = $_SESSION['flash_sukses'] ?? '';
 unset($_SESSION['flash_sukses']);
 
@@ -67,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $guestBook->simpan($input['nama'], $input['email'], $input['pesan']);
 
-                // Token diganti setelah dipakai, lalu alihkan (Post/Redirect/Get)
                 $_SESSION['csrf_token']   = bin2hex(random_bytes(32));
                 $_SESSION['flash_sukses'] = 'Pesan berhasil dikirim. Terima kasih!';
                 header('Location: guestbook.php');
